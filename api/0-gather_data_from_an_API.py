@@ -7,23 +7,15 @@ import requests
 import sys
 
 if __name__ == "__main__":
-    if len(sys.argv) > 1:
-        emp_id = sys.argv[1]
-        base_url = "https://jsonplaceholder.typicode.com"
-        
-        # Fetch user details
-        user_res = requests.get(f"{base_url}/users/{emp_id}")
-        employee_name = user_res.json().get("name")
-        
-        # Fetch todos for the user
-        todos_res = requests.get(f"{base_url}/todos", params={"userId": emp_id})
-        todos = todos_res.json()
-        
-        total_tasks = len(todos)
-        done_tasks = [t for t in todos if t.get("completed")]
-        number_of_done_tasks = len(done_tasks)
-        
-        # Display output in the exact format required
-        print(f"Employee {employee_name} is done with tasks({number_of_done_tasks}/{total_tasks}):")
-        for task in done_tasks:
-            print(f"\t {task.get('title')}")
+    emp_id = sys.argv[1]
+    url = "https://jsonplaceholder.typicode.com/"
+    user = requests.get(url + "users/{}".format(emp_id)).json()
+    todos = requests.get(url + "todos", params={"userId": emp_id}).json()
+
+    completed = [t.get("title") for t in todos if t.get("completed") is True]
+
+    print("Employee {} is done with tasks({}/{}):".format(
+        user.get("name"), len(completed), len(todos)))
+
+    for title in completed:
+        print("\t {}".format(title))
